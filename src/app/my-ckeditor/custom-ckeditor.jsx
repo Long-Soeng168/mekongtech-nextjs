@@ -86,6 +86,7 @@ import {
 import "ckeditor5/ckeditor5.css";
 
 import "./custom-ckeditor.css";
+import MyFileManager from "../my-file-manager/my-file-manager";
 
 /**
  * Create a free account with a trial: https://portal.ckeditor.com/checkout?plan=free
@@ -95,6 +96,7 @@ const LICENSE_KEY = "GPL"; // or <YOUR_LICENSE_KEY>.
 export default function CustomCKEditor() {
   return (
     <div className="w-full no-tailwind">
+      <MyFileManager />
       {
         <CKEditor
           onChange={(event, editor) => {
