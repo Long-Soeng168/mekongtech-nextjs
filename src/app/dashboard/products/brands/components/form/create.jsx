@@ -53,9 +53,9 @@ const formSchema = z.object({
   image: z.any().optional(),
 });
 
-export default function CreateCategoryForm() {
+export default function CreateBrandForm() {
   const [loadingCategories, setLoadingCategories] = useState(false);
-  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
 
   const handleFetchCategories = async () => {
     try {
@@ -68,7 +68,7 @@ export default function CreateCategoryForm() {
         });
         return;
       }
-      setCategories(result.data);
+      setBrands(result.data);
     } catch (error) {
       console.log(error);
       toast({
@@ -96,7 +96,6 @@ export default function CreateCategoryForm() {
       title_kh: "",
       code: "",
       order_index: 1,
-      parent_code: "",
       image: undefined,
     },
   });
@@ -110,16 +109,16 @@ export default function CreateCategoryForm() {
     if (values.order_index !== undefined) {
       formData.append("order_index", values.order_index.toString());
     }
-    if (values.parent_code) {
-      formData.append("parent_code", values.parent_code);
-    }
+    // if (values.parent_code) {
+    //   formData.append("parent_code", values.parent_code);
+    // }
     if (files && files?.length > 0) {
       formData.append("image", files[0]); // Append the first file
     }
 
     try {
       const response = await axios.post(
-        `${BASE_BACKEND_API_URL}categories`,
+        `${BASE_BACKEND_API_URL}brands`,
         formData,
         {
           headers: {
@@ -140,7 +139,7 @@ export default function CreateCategoryForm() {
       });
       form.reset();
       setFiles(null);
-      clearCache("/dashboard/products/categories");
+      clearCache("/dashboard/products/brands");
     } catch (error) {
       console.log("original error", error);
       if (error.response) {
@@ -233,7 +232,7 @@ export default function CreateCategoryForm() {
               )}
             />
           </div>
-          <div className="col-span-6">
+          {/* <div className="col-span-6">
             {loadingCategories ? (
               <MyLoadingAnimation />
             ) : (
@@ -314,7 +313,7 @@ export default function CreateCategoryForm() {
                 )}
               />
             )}
-          </div>
+          </div> */}
         </div>
         <FormField
           control={form.control}

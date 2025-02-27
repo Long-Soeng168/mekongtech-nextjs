@@ -31,20 +31,20 @@ const DeleteButton = ({ id }) => {
   const handleDelete = async () => {
     setIsSubmitting(true);
     try {
-      const response = await fetch(`${BASE_BACKEND_API_URL}categories/${id}`, {
+      const response = await fetch(`${BASE_BACKEND_API_URL}brands/${id}`, {
         method: "DELETE",
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to delete category");
+        throw new Error(errorData.message || "Failed to delete brand");
       }
 
       toast({
         title: "Deleted successfully.",
         variant: "success",
       });
-      clearCache("/dashboard/products/categories");
+      clearCache("/dashboard/products/brands");
     } catch (err) {
       toast({
         title: `${err instanceof Error ? err.message : "Something went wrong"}`,

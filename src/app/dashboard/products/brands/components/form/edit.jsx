@@ -40,9 +40,9 @@ import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 import axios from "axios";
 import MyProgressBar from "@/components/my-progress-bar";
-import { fetchCategories, fetchCategory } from "@/service/category-service";
 import MyLoadingAnimation from "../../../../../../components/my-loading-animation";
 import { clearCache } from "@/lib/clear-cache";
+import { fetchBrand, fetchBrands } from "@/service/brands-service";
 
 // Define the form schema using zod
 const formSchema = z.object({
@@ -50,16 +50,15 @@ const formSchema = z.object({
   title_kh: z.string().min(1, "Khmer title is required").max(255),
   code: z.string().min(1, "Code is required").max(255),
   order_index: z.coerce.number().min(0).max(255).optional(),
-  parent_code: z.string().min(0).optional(),
   image: z.any().optional(), // Allow any file type for the image
 });
 
-export default function EditCategoryForm({ id }) {
-  const [loadingCategory, setLoadingCategory] = useState(false);
-  const [category, setCategory] = useState(null);
+export default function EditBrandForm({ id }) {
+  const [loadingBrand, setLoadingBrand] = useState(false);
+  const [brand, setbrand] = useState(null);
 
-  const [loadingCategories, setLoadingCategories] = useState(false);
-  const [categories, setCategories] = useState([]);
+  const [loadingBrands, setLoadingBrands] = useState(false);
+  const [Brands, setBrands] = useState([]);
 
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -75,69 +74,67 @@ export default function EditCategoryForm({ id }) {
       title_kh: "",
       code: "",
       order_index: 1,
-      parent_code: "",
       image: undefined,
     },
   });
 
-  const handleFetchCategories = async () => {
+  const handleBrands = async () => {
     try {
-      setLoadingCategories(true);
-      const resultCategories = await fetchCategories({ per_page: "200" });
-      if (!resultCategories.data) {
+      setLoadingBrands(true);
+      const resultBrands = await fetchBrands({ per_page: "200" });
+      if (!resultBrands.data) {
         toast({
-          title: "Fail fetching Categories.",
+          title: "Fail fetching brands.",
           variant: "destructive",
         });
         return;
       }
-      setCategories(resultCategories.data);
+      setBrands(resultBrands.data);
     } catch (error) {
       console.log(error);
       toast({
-        title: "Fail fetching Categories.",
+        title: "Fail fetching brands.",
         variant: "destructive",
       });
     } finally {
-      setLoadingCategories(false);
+      setLoadingBrands(false);
     }
   };
 
-  const handleFetchCategory = async () => {
+  const handleFetchBrands = async () => {
     try {
-      setLoadingCategory(true);
-      const resultCategory = await fetchCategory({ id: id });
-      console.log(resultCategory);
-      if (!resultCategory) {
+      setLoadingBrands(true);
+      const resultBrands = await fetchBrand({ id: id });
+      console.log(resultBrands);
+      if (!resultBrands) {
         toast({
-          title: "Fail fetching Category.",
+          title: "Fail fetching brands.",
           variant: "destructive",
         });
         return;
       }
-      setCategory(resultCategory);
+      setBrands(resultBrands);
       // Set form values with fetched data
       form.reset({
-        title: resultCategory.title,
-        title_kh: resultCategory.title_kh,
-        code: resultCategory.code,
-        order_index: resultCategory.order_index,
-        parent_code: resultCategory.parent_code || "",
+        title: resultBrands.title,
+        title_kh: resultBrands.title_kh,
+        code: resultBrands.code,
+        order_index: resultBrands.order_index,
       });
     } catch (error) {
       console.log(error);
       toast({
-        title: "Fail fetching Category.",
+        title: "Fail fetching Brands.",
         variant: "destructive",
       });
     } finally {
-      setLoadingCategory(false);
+      setLoadingBrands(false);
     }
   };
 
   useEffect(() => {
-    handleFetchCategory();
-    handleFetchCategories();
+    handleFetchBrands();
+    handleBrands();
   }, [refreshKey]);
 
   const onSubmit = async (values) => {
@@ -150,16 +147,16 @@ export default function EditCategoryForm({ id }) {
     if (values.order_index !== undefined) {
       formData.append("order_index", values.order_index.toString());
     }
-    if (values.parent_code) {
-      formData.append("parent_code", values.parent_code);
-    }
+    // if (values.parent_code) {
+    //   formData.append("parent_code", values.parent_code);
+    // }
     if (files && files.length > 0) {
       formData.append("image", files[0]); // Append the first file
     }
 
     try {
       const response = await axios.post(
-        `${BASE_BACKEND_API_URL}categories/${id}/update`,
+        `${BASE_BACKEND_API_URL}brands/${id}/update`,
         formData,
         {
           headers: {
@@ -175,12 +172,12 @@ export default function EditCategoryForm({ id }) {
       );
       setUploadProgress(0);
       toast({
-        title: "Create Successfully.",
+        title: "Update Successfully.",
         variant: "success",
       });
       form.reset();
       setFiles(null);
-      clearCache("/dashboard/products/categories");
+      clearCache("/dashboard/products/brands");
       setRefreshKey((prev) => prev + 1);
     } catch (error) {
       console.log(error);
@@ -271,8 +268,8 @@ export default function EditCategoryForm({ id }) {
               )}
             />
           </div>
-          <div className="col-span-6">
-            {loadingCategories ? (
+          {/* <div className="col-span-6">
+            {loadingBrands ? (
               <MyLoadingAnimation />
             ) : (
               <FormField
@@ -280,7 +277,7 @@ export default function EditCategoryForm({ id }) {
                 name="parent_code"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Parent category</FormLabel>
+                    <FormLabel>Parent Brands</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -293,10 +290,10 @@ export default function EditCategoryForm({ id }) {
                             )}
                           >
                             {field.value
-                              ? categories.find(
-                                  (category) => category.code === field.value
+                              ? Brands.find(
+                                  (Brands) => Brands.code === field.value
                                 )?.title
-                              : "Select category"}
+                              : "Select Brands"}
                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                           </Button>
                         </FormControl>
@@ -323,7 +320,7 @@ export default function EditCategoryForm({ id }) {
                                 />
                                 {`N/A`}
                               </CommandItem>
-                              {categories.map((category) => (
+                              {Brands.map((category) => (
                                 <CommandItem
                                   value={category.title}
                                   key={category.code}
@@ -352,7 +349,7 @@ export default function EditCategoryForm({ id }) {
                 )}
               />
             )}
-          </div>
+          </div> */}
         </div>
         <FormField
           control={form.control}
@@ -393,11 +390,11 @@ export default function EditCategoryForm({ id }) {
                   </FileInput>
                   <FileUploaderContent className="flex items-center flex-row gap-2">
                     {(files?.length ?? 0) > 0 ||
-                      (category?.image && (
+                      (brand?.image && (
                         <span className="size-20 mt-2 border p-0 rounded-md overflow-hidden">
                           <Image
-                            src={`${CATEGORY_IMAGE_URL}${category?.image}`}
-                            alt={category?.image || "icon image"}
+                            src={`${CATEGORY_IMAGE_URL}${brand?.image}`}
+                            alt={brand?.image || "icon image"}
                             height={80}
                             width={80}
                             className="size-20 p-0 object-contain"

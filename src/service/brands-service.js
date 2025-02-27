@@ -5,7 +5,6 @@ export async function fetchBrands({
   page = "1",
   search = "",
   sort_by = "",
-  parent_code = "",
   status = "",
   main_category = "0",
 } = {}) {
@@ -14,7 +13,6 @@ export async function fetchBrands({
     page,
     search,
     sort_by,
-    parent_code,
     status,
     main_category,
   });
