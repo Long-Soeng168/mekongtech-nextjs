@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CATEGORY_IMAGE_URL } from "@/config/env";
+import { BRAND_IMAGE_URL } from "@/config/env";
 import moment from "moment";
 import MyNoDataIcon from "@/components/my-no-data-icon";
 import MyPagination from "@/components/my-pagination";
@@ -66,7 +66,7 @@ const TableData = async ({ search, page, sort_by, parent_code, status }) => {
                 <TableCell>
                   {brand.image ? (
                     <Image
-                      src={CATEGORY_IMAGE_URL + brand.image}
+                      src={BRAND_IMAGE_URL + brand.image}
                       width={100}
                       height={100}
                       alt=""
